@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            <form action="{% url 'collect' %}" method="post">
+                <div class="form-group input-group">
+                    <input type="text" class="form-control" name="marker" placeholder="ex: 101A 102A">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit" name="action" value="add">
+                            <i class="glyphicon glyphicon-plus"></i>
+                        </button>
+                        <button class="btn btn-default" type="submit" name="action" value="remove">
+                            <i class="glyphicon glyphicon-minus"></i>
+                        </button>
+                    </span>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-bordered">
+                {% for result in results %}
+                    <tr>
+                        <th>{{ result.prize.name }}</th>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar{% if result.progress == 100 %} progress-bar-success{% elif result.progress > 25 %} progress-bar-warning{% else %} progress-bar-danger{% endif %}" style="width: {{ result.progress }}%;"></div>
+                            </div>
+                            <div class="markers">
+                                {% for marker in result.markers %}
+                                    {% if not forloop.first and not forloop.last %}, {% endif %}
+                                    {% if forloop.last %} &amp; {% endif %}
+                                    <span class="marker">
+                                        {% if marker.count %}
+                                            <strong>
+                                        {% endif %}
+
+                                        {{ marker.code }}
+
+                                        {% if marker.count %}
+                                            </strong>
+                                            <small>({{ marker.count }})</small>
+                                        {% endif %}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
